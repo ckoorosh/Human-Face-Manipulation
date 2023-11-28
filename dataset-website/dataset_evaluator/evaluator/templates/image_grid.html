@@ -22,7 +22,7 @@
 
         #imageGrid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr); /* 5 columns */
+            grid-template-columns: repeat({{ column_number }}, 1fr); /* 5 columns */
             gap: 10px;
             justify-content: center;
             margin: 20px;
@@ -144,6 +144,8 @@
                     item.classList.toggle('selected');
                 });
             });
+
+            const columnNumber = {{ column_number }};
     
             if (submitBtn) {
                 submitBtn.addEventListener('click', () => {
@@ -186,7 +188,7 @@
                 nextBatchBtn.addEventListener('click', () => {
                     // Use AJAX to load the next batch
                     const nextBatchNumber = {{ batch_number }} + 1;  // You need to adjust this logic based on your requirements
-                    window.location.href = `/image_grid/?batch_number=${nextBatchNumber}`;
+                    window.location.href = `/image_grid/?batch_number=${nextBatchNumber}&column_number=${columnNumber}`;
                 });
             }
 

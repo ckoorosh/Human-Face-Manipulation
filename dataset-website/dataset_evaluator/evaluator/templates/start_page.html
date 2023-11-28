@@ -94,6 +94,7 @@
         <form action="/image_grid/" method="get">
             <label for="batchNumber">Enter Batch Number:</label>
             <input type="number" id="batchNumber" name="batch_number" required>
+            <input type="hidden" name="column_number" value="5"/>
             <button type="submit">Start Evaluation</button>
         </form>
     </div>
@@ -119,7 +120,7 @@
         batchButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const batchNumber = button.dataset.batch;
-                window.location.href = `/image_grid/?batch_number=${batchNumber}`;
+                window.location.href = `/image_grid/?batch_number=${batchNumber}&column_number=5`;
             });
         });
     });
