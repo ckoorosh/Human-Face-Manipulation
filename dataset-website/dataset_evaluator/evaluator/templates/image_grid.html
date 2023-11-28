@@ -95,7 +95,7 @@
         }
 
         #nextBatchBtn {
-            display: none;
+            display: block;
             padding: 12px 20px;
             font-size: 16px;
             background-color: #2ecc71;
@@ -131,6 +131,11 @@
             const imageItems = document.querySelectorAll('.imageItem');
             const submitBtn = document.getElementById('submitBtn');
             const nextBatchBtn = document.getElementById('nextBatchBtn');
+
+            // Show the Next Batch button
+            if (nextBatchBtn && {% if is_last_batch %}true{% else %}false{% endif %}) {
+                nextBatchBtn.style.display = 'none';
+            }
     
             let isSubmitted = false;
     
@@ -166,11 +171,6 @@
                             submitBtn.textContent = 'Submitted!';
                             submitBtn.style.backgroundColor = '#099443';
                             submitBtn.style.color = '#fff';
-    
-                            // Show the Next Batch button
-                            if (nextBatchBtn && !{% if is_last_batch %}true{% else %}false{% endif %}) {
-                                nextBatchBtn.style.display = 'block';
-                            }
     
                             // Set the flag to prevent multiple submissions
                             isSubmitted = true;
