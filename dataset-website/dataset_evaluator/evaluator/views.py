@@ -4,11 +4,25 @@ from django.shortcuts import render
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import SelectedImage
+from .models import SelectedImage, Batch
 from django.db.models import F
+from django.conf import settings
+
 
 def start_page(request):
-    return render(request, 'start_page.html')
+    submitted_batches = Batch.objects.filter(submitted=True).values_list('batch_number', flat=True)
+    images_folder = 'static/images'  # Adjust the folder path as needed
+
+    # Get a list of image files in the folder
+    image_files = [f for f in os.listdir(images_folder) if f.endswith('.jpg')]
+    all_batches = range(1, len(image_files) // settings.BATCH_SIZE + 2)  # Assuming you have batches from 1 to 100
+    # all_batches = range(1, 404)  # Assuming you have batches from 1 to 100
+
+    context = {
+        'submitted_batches': submitted_batches,
+        'all_batches': all_batches,
+    }
+    return render(request, 'start_page.html', context)
 
 def image_grid(request):
     batch_number = int(request.GET.get('batch_number'))
@@ -18,12 +32,9 @@ def image_grid(request):
     # Get a list of image files in the folder
     image_files = [f for f in os.listdir(images_folder) if f.endswith('.jpg')]
 
-    # Set the batch size
-    batch_size = 17  # Adjust the batch size as needed
-
     # Calculate the start and end index for the batch
-    start_index = (batch_number - 1) * batch_size
-    end_index = start_index + batch_size
+    start_index = (batch_number - 1) * settings.BATCH_SIZE
+    end_index = start_index + settings.BATCH_SIZE
     is_last_batch = end_index >= len(image_files)
 
     # Slice the image files based on the batch size and number
@@ -39,6 +50,7 @@ def save_selected_images(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         selected_ids = data.get('selected_ids', [])
+        batch_number = data.get('batch_number', -1)
 
         print('Selected Images:', selected_ids)
 
@@ -49,6 +61,11 @@ def save_selected_images(request):
                 # If the image already exists, increment the selected_count
                 selected_image.selected_count = F('selected_count') + 1
                 selected_image.save()
+
+        # Update Batch object for the submitted batch
+        batch, created = Batch.objects.get_or_create(batch_number=batch_number)
+        batch.submitted = True
+        batch.save()
 
         return JsonResponse({'status': 'success'})
 

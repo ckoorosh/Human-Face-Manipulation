@@ -145,6 +145,8 @@
                     if (!isSubmitted) {
                         const selectedIds = Array.from(document.querySelectorAll('.imageItem.selected'))
                             .map(item => item.dataset.imageId);
+
+                        const batchNumber = {{ batch_number }};
     
                         // Use AJAX to send selectedIds to the server and save to the SelectedImage model
                         fetch('/save_selected_images/', {
@@ -153,7 +155,7 @@
                                 'Content-Type': 'application/json',
                                 'X-CSRFToken': getCookie('csrftoken'),
                             },
-                            body: JSON.stringify({ selected_ids: selectedIds }),
+                            body: JSON.stringify({ selected_ids: selectedIds, batch_number: batchNumber }),
                         })
                         .then(response => response.json())
                         .then(data => {

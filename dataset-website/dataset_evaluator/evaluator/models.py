@@ -6,3 +6,7 @@ class SelectedImage(models.Model):
 
     def __str__(self):
         return f"Image {self.image_id}"
+
+class Batch(models.Model):
+    batch_number = models.IntegerField(unique=True)
+    submitted = models.BooleanField(default=False)
